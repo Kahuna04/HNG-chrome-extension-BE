@@ -10,6 +10,14 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get("/", (req, res) => {
+    res.send("Express on vercel");
+});
+
+app.listen(5000, () => {
+    console.log("Running on port 5000.");
+});
+
 app.use(express.json());
 // Serve uploaded video files
 app.use('/uploads/videos', express.static('uploads/videos'));
