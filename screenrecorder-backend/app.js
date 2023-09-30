@@ -1,74 +1,35 @@
 const express = require('express');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const dotenv = require('dotenv');
-const AWS = require('aws-sdk');
-const { Deepgram } = require('@deepgram/sdk');
-
+const videoRoutes = require('./src/routes/videoRoute')
+const {notFound, errorHandler} = require('./src/middleware/errorhandler')
 const app = express();
-const port = 3000;
 
-// Load environment variables
-dotenv.config();
-
-// Create an S3 instance
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
 });
 
-// Create a deepgram instance
-const deepgram = new Deepgram({
-  apiKey: process.env.DEEPGRAM_API_KEY,
-});
-
-// Configure multer-s3 for file uploads to S3
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: 'hngscreenrecord',
-    acl: 'public-read',
-    contentType: multerS3.AUTO_CONTENT_TYPE,
-    key: function (req, file, cb) {
-      cb(null, 'videos/' + Date.now() + '-' + file.originalname);
-    },
-  }),
-});
-
-// Endpoint
 app.use(express.json());
+// Serve uploaded video files
+app.use('/uploads/videos', express.static('uploads/videos'));
 
-app.post('/upload-video', upload.single('video'), async (req, res) => {
-  try {
-    const file = req.file;
-
-    if (!file) {
-      return res.status(400).json({ error: 'No file provided' });
+app.use(videoRoutes);
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to the api ',
+    usage: {
+      1:'access "/api/videos" to get all videos.',
+      2: '"api/upload" to upload a new video', 
+      3: '"/api/video/examplevideourl.mp4" to get a video'
     }
+  })
+})
 
-    // Get the S3 object URL
-    const fileUrl = file.location;
+app.use(notFound)
+app.use(errorHandler)
 
-    // Transcribe the video using Deepgram
-    const response = await deepgram.transcription.preRecorded(
-      { url: "https://http://16.171.165.62:3000/upload-video" + filename },
-      { punctuate: true, utterances: true }
-    );
-
-    const srtTranscript = response.toSRT();
-
-    res.status(200).json({
-      status: 'Success',
-      transcript: srtTranscript,
-    });
-  } catch (error) {
-    console.error('Upload and transcription error:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Start the server
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
-
+    console.log(`server is running on port ${port}`)
+})
