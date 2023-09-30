@@ -2,7 +2,7 @@
   "name": "HNG-chrome-extension-BE",
   "version": "1.0.0",
   "master": "app.js",
-  "scripts": {
+  "scripts": { "node app.js"
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
