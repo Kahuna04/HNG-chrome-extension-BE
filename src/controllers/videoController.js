@@ -1,5 +1,11 @@
 const path = require('path');
 const fs = require('fs');
+const { Deepgram } = require("@deepgram/sdk");
+
+const deepgram = new Deepgram({
+  apiKey: process.env.DEEPGRAM_API_KEY,
+});
+
 const videoDirectory = path.join(__dirname, '../../uploads/');
 
 exports.getVideo = (req, res, next) => {
