@@ -64,4 +64,25 @@ router.get('/api/video/:filename', getVideo);
 
 router.post('/api/upload',upload.single('video'), uploadVideo);
 
+router.post('/api/videos/transcribe', async (req, res) => {
+    try {
+        const { fileUrl } = req.body;
+
+        if (!fileUrl) {
+            return res.status(400).json({ error: 'No file URL provided' });
+        }
+
+        // Call the transcribeVideo function from the controller
+        const transcript = await videoController.transcribeVideo(fileUrl);
+
+        res.status(200).json({
+            status: 'Success',
+            transcript,
+        });
+    } catch (error) {
+        console.error('Transcription error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 module.exports = router;
