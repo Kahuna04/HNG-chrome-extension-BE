@@ -83,3 +83,20 @@ exports.uploadVideo = async (req, res, next) => {
         return res.status(500).json({ error: 'An error occurred while uploading' });
     }
 };
+
+exports.transcribeVideo = async (fileUrl) => {
+  try {
+    // Transcribe the video using Deepgram
+    const response = await deepgram.transcription.preRecorded(
+      { url: fileUrl },
+      { punctuate: true, utterances: true }
+    );
+
+    const srtTranscript = response.toSRT();
+
+    return srtTranscript;
+  } catch (error) {
+    console.error('Transcription error:', error);
+    throw new Error('Transcription failed');
+  }
+};
