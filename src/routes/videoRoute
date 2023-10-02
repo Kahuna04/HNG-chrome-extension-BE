@@ -59,7 +59,7 @@ router.get('/api/videos', (req, res) => {
     }
 });
 
-router.get('/api/video/:filename', getVideo);
+router.get('/api/video/examplevideourl.mp4', getVideo);
 
 router.post('/api/upload',upload.single('video'), uploadVideo);
 
