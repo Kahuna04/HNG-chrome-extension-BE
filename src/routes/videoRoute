@@ -72,6 +72,16 @@ router.post('/api/videos/transcribe', async (req, res) => {
       return res.status(400).json({ error: 'Invalid request data' });
     }
 
+// Ensure that fileUrl is a valid URL
+    if (!isValidUrl(fileUrl)) {
+      return res.status(400).json({ error: 'Invalid file URL' });
+    }
+
+    // Ensure that mimeType is one of the allowed types
+    if (!isValidMimeType(mimeType)) {
+      return res.status(400).json({ error: 'Invalid MIME type' });
+    }
+
     const transcriptionResult = await transcribeAudio(fileUrl, mimeType);
 
     return res.status(200).json({ success: true, transcriptionResult });
