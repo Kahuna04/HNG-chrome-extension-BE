@@ -90,19 +90,35 @@ exports.uploadVideo = async (req, res, next) => {
     }
 };
 
-exports.transcribeVideo = async (fileUrl) => {
-  try {
-    // Transcribe the video using Deepgram
-    const response = await deepgram.transcription.preRecorded(
-      { url: fileUrl },
-      { punctuate: true, utterances: true }
-    );
+async function transcribeAudio(file, mimeType) {
+  let source;
 
-    const srtTranscript = response.toSRT();
+  if (file.startsWith('http')) {
+    source = {
+      url: file,
+    };
+  } else {
+    const audio = fs.readFileSync(file);
 
-    return srtTranscript;
-  } catch (error) {
-    console.error('Transcription error:', error);
-    throw new Error('Transcription failed');
+    source = {
+      buffer: audio,
+      mimetype: mimeType,
+    };
   }
+
+  try {
+    const response = await deepgram.transcription.preRecorded(source, {
+      smart_format: true,
+      model: 'nova',
+    });
+
+    // You can process and return the response as needed
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = {
+  transcribeAudio,
 };
