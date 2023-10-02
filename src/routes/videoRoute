@@ -7,7 +7,7 @@ const { getVideo, uploadVideo } = require('../controllers/videoController')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, '/uploads/');
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname)
@@ -28,7 +28,7 @@ const upload = multer({ storage, fileFilter});
 const router = express.Router();
 
 // Directory where your uploaded videos are stored
-const videoDirectory = 'uploads/'; 
+const videoDirectory = '/uploads/'; 
 
 // Route to get a list of all video files
 router.get('/api/videos', (req, res) => {
