@@ -120,5 +120,5 @@ exports.transcribeAudio = async function(file, mimeType) {
 }
 
 module.exports = {
-  transcribeAudio,
+  transcribeAudio
 };
