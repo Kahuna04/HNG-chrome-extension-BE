@@ -90,7 +90,7 @@ exports.uploadVideo = async (req, res, next) => {
     }
 };
 
-async function transcribeAudio(file, mimeType) {
+exports.transcribeAudio = async function(file, mimeType) {
   let source;
 
   if (file.startsWith('http')) {
