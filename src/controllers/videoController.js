@@ -118,7 +118,3 @@ exports.transcribeAudio = async function(file, mimeType) {
     throw error;
   }
 }
-
-module.exports = {
-  transcribeAudio
-};
